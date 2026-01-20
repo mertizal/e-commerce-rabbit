@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  jmeter:
+    image: justb4/jmeter
+    container_name: jmeter
+    volumes:
+      - ./jmeter/tests:/tests
+      - ./jmeter/results:/results
+    command: >
+      -n
+      -t /tests/order-test.jmx
+      -l /results/results.jtl
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: e-commerce-rabbit
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  health:
+    db:
+      enabled: true
+    rabbit:
+      enabled: true
+    defaults:
+      enabled: true
+
+server:
+  error:
+    whitelabel:
+      enabled: false
