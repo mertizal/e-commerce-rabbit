@@ -179,6 +179,54 @@ Results are analyzed using JMeter summary reports and application logs.
 
 ---
 
+## CI/CD and Cloud Deployment
+
+The system uses a fully automated CI/CD pipeline built with GitHub Actions to ensure that every change is tested, containerized, and deployed without manual intervention.
+
+The pipeline consists of the following stages:
+
+### Build & Test
+
+* Compiles the application using JDK 21 and Maven
+* Executes unit tests
+* Packages the application as a JAR artifact
+
+### Dockerization
+
+* Builds a multi-architecture Docker image
+* Pushes the image to Docker Hub using latest and commit-based SHA tags
+* Leverages Docker layer caching for faster builds
+
+### Cloud Deployment
+
+* Automatically deploys the application to Fly.io using flyctl
+* Pulls the container image directly from Docker Hub
+* Ensures zero-downtime releases via health checks
+
+## Infrastructure as Code
+
+All infrastructure components are managed declaratively using Fly.io configuration files.
+Application Configuration
+Managed via fly.toml
+Defines environment variables, secrets, and scaling parameters
+RabbitMQ Configuration
+Managed via fly.rabbitmq.toml
+Uses Fly Volumes for persistent message storage
+Configured with explicit resource limits and health checks
+
+## Resilience and Persistence
+
+The system is designed for reliability and data durability in a cloud environment.
+Database Persistence
+Uses a managed PostgreSQL instance on Fly.io
+Ensures durable storage for transactional data
+Message Broker Reliability
+RabbitMQ runs with a dedicated persistent volume for the Mnesia database
+Prevents message loss during restarts and redeployments
+Publisher Confirms
+Enabled using correlated confirms
+Reply timeout tuned to handle cloud network latency
+
 ## Technology Stack
 
 * Java
