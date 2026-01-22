@@ -70,3 +70,21 @@ jobs:
             ${{ secrets.DOCKER_HUB_USERNAME }}/ecommerce-app:${{ github.sha }}
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/ecommerce-app:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/ecommerce-app:buildcache,mode=max
+
+  fly-deploy:
+    name: Deploy to Fly.io
+    needs: docker-push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy Application to Fly.io
+        run: flyctl deploy -a e-commerce-app-black-sunset-774
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
